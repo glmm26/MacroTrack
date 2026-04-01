@@ -12,6 +12,7 @@
     />
     <link rel="stylesheet" href="./style.css" />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script defer src="./catalog.js"></script>
     <script defer src="./script.js"></script>
   </head>
   <body>
@@ -27,7 +28,7 @@
         </div>
         <div class="hero__metrics">
           <div class="mini-card">
-            <span>Meta diaria</span>
+            <span>Meta calorica</span>
             <strong id="heroGoal">2200 kcal</strong>
           </div>
           <div class="mini-card">
@@ -37,6 +38,10 @@
           <div class="mini-card">
             <span>Restante</span>
             <strong id="heroRemaining">2200 kcal</strong>
+          </div>
+          <div class="mini-card mini-card--protein">
+            <span>Meta proteica</span>
+            <strong id="heroProteinGoal">160 g</strong>
           </div>
         </div>
       </header>
@@ -55,6 +60,17 @@
           </div>
 
           <form id="foodForm" class="food-form">
+            <div class="entry-mode" role="radiogroup" aria-label="Modo de cadastro">
+              <label class="entry-mode__option">
+                <input type="radio" name="entryMode" value="api" checked />
+                <span>Buscar na API</span>
+              </label>
+              <label class="entry-mode__option">
+                <input type="radio" name="entryMode" value="manual" />
+                <span>Adicionar manualmente</span>
+              </label>
+            </div>
+
             <label class="input-group input-group--grow">
               <span>Alimento</span>
               <input
@@ -65,6 +81,62 @@
                 required
               />
             </label>
+
+            <div id="manualFields" class="manual-fields is-hidden">
+              <div class="local-catalog">
+                <div class="local-catalog__header">
+                  <strong>Biblioteca brasileira</strong>
+                  <span>Pesquise alimentos e pratos tipicos para preencher os macros automaticamente.</span>
+                </div>
+                <label class="input-group local-catalog__search">
+                  <span>Pesquisar na biblioteca</span>
+                  <input
+                    id="catalogSearch"
+                    type="text"
+                    placeholder="Ex: arroz branco, feijao tropeiro, pao de queijo"
+                  />
+                </label>
+                <label class="input-group local-catalog__filter">
+                  <span>Categoria</span>
+                  <select id="catalogCategory"></select>
+                </label>
+                <div id="catalogResults" class="catalog-results"></div>
+              </div>
+
+              <label class="input-group">
+                <span>Quantidade</span>
+                <input id="manualQuantity" type="text" placeholder="Ex: 100g, 1 concha, 1 unidade" />
+              </label>
+              <div class="input-group">
+                <span>Unidades</span>
+                <div class="stepper">
+                  <button id="manualDecrease" class="stepper__button" type="button">-</button>
+                  <input id="manualMultiplier" type="number" min="1" step="1" value="1" />
+                  <button id="manualIncrease" class="stepper__button" type="button">+</button>
+                </div>
+              </div>
+              <label class="input-group">
+                <span>Peso ajustavel (g/ml)</span>
+                <input id="manualWeight" type="number" min="1" step="1" placeholder="Ex: 150" />
+              </label>
+              <label class="input-group">
+                <span>Calorias</span>
+                <input id="manualCalories" type="number" min="0" step="0.1" placeholder="Ex: 143" />
+              </label>
+              <label class="input-group">
+                <span>Proteinas (g)</span>
+                <input id="manualProtein" type="number" min="0" step="0.1" placeholder="Ex: 10" />
+              </label>
+              <label class="input-group">
+                <span>Carboidratos (g)</span>
+                <input id="manualCarbs" type="number" min="0" step="0.1" placeholder="Ex: 18" />
+              </label>
+              <label class="input-group">
+                <span>Gorduras (g)</span>
+                <input id="manualFat" type="number" min="0" step="0.1" placeholder="Ex: 3.5" />
+              </label>
+            </div>
+
             <button id="submitButton" type="submit" class="btn-primary">Adicionar</button>
           </form>
 
@@ -77,13 +149,26 @@
               <span>Meta diaria (kcal)</span>
               <input id="goalInput" type="number" min="0" step="50" placeholder="2200" />
             </label>
+            <label class="input-group">
+              <span>Meta proteica (g)</span>
+              <input id="proteinGoalInput" type="number" min="0" step="5" placeholder="160" />
+            </label>
             <div class="goal-progress">
               <div class="goal-progress__label">
-                <span>Progresso da meta</span>
+                <span>Progresso calorico</span>
                 <strong id="goalProgressText">0%</strong>
               </div>
               <div class="progress-bar">
                 <div id="goalProgressBar" class="progress-bar__fill"></div>
+              </div>
+            </div>
+            <div class="goal-progress goal-progress--protein">
+              <div class="goal-progress__label">
+                <span>Progresso proteico</span>
+                <strong id="proteinGoalProgressText">0%</strong>
+              </div>
+              <div class="progress-bar progress-bar--protein">
+                <div id="proteinGoalProgressBar" class="progress-bar__fill progress-bar__fill--protein"></div>
               </div>
             </div>
           </div>
